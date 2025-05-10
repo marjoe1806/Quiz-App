@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>OOP Quiz App</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #ffffff, #fff9c4, #ffeb3b, #fbc02d);
+            color: #2c3e50;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100%;
+        }
+
+        .col-3 {
+            width: 20%;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.3);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            color: #2c3e50;
+            overflow-y: auto;
+        }
+
+        .col-3 h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .col-3 button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #2c3e50;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .col-3 button:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .col-9 {
+            width: 75%;
+            padding: 20px;
+            color: #2c3e50;
+        }
+
+        .category-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .student-buttons {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+        }
+
+        .student-buttons button {
+            padding: 8px;
+            font-size: 12px;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.7);
+            color: #2c3e50;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .student-buttons button:hover {
+            background: #ffffff;
+        }
+
+        #quiz-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            color: #2c3e50;
+            padding: 30px;
+            border-radius: 15px;
+            display: none;
+            z-index: 10;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        #quiz-modal h3 {
+            margin-top: 0;
+        }
+
+        #quiz-modal textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            color: #2c3e50;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        #quiz-modal button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #quiz-modal button:hover {
+            background: #1f6391;
+        }
+
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 5;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header style="background: transparent; padding: 10px 20px; display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXQMoVMB8Cf5eN_5yeIi1IrBDF8BCroLZdeA&s" alt="Quiz App Logo" style="height: 100px; margin-right: 15px; border-radius: 50%;">
+        <h1 style="margin: 0; font-size: 1.8em; color: #2c3e50;">OOP Quiz App</h1>
+    </header>
+
+    <div class="container">
+        <div class="col-3">
+            <h2>Select Category</h2>
+            <label for="language-select" style="display: block; margin-bottom: 10px;">Programming Language:</label>
+            <select id="language-select" onchange="updateCategoryOptions()" style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 6px; border: 1px solid #ccc;">
+                <option value="All">All Languages</option>
+                <option value="JavaScript">JavaScript</option>
+                <option value="Python">Python</option>
+                <option value="Java">Java</option>
+                <option value="C++">C++</option>
+                <option value="Ruby">Ruby</option>
+                <option value="C#">C#</option>
+                <option value="PHP">PHP</option>
+                <option value="Swift">Swift</option>
+                <option value="Kotlin">Kotlin</option>
+                <option value="Go">Go</option>
+                <option value="Rust">Rust</option>
+                <option value="TypeScript">TypeScript</option>
+                <option value="Perl">Perl</option>
+                <option value="R">R</option>
+                <option value="Scala">Scala</option>
+                <option value="Dart">Dart</option>
+                <option value="Shell">Shell</option>
+                <option value="MATLAB">MATLAB</option>
+                <option value="Haskell">Haskell</option>
+            </select>
+            <div id="category-buttons">
+                <button onclick="loadCategory('Very Easy', 80)" aria-label="Select Very Easy category worth 80 points">Very Easy (80 pts)</button>
+                <button onclick="loadCategory('Easy', 85)" aria-label="Select Easy category worth 85 points">Easy (85 pts)</button>
+                <button onclick="loadCategory('Medium', 90)" aria-label="Select Medium category worth 90 points">Medium (90 pts)</button>
+                <button onclick="loadCategory('Hard', 95)" aria-label="Select Hard category worth 95 points">Hard (95 pts)</button>
+                <button onclick="loadCategory('Very Hard', 100)" aria-label="Select Very Hard category worth 100 points">Very Hard (100 pts)</button>
+            </div>
+        </div>
+
+        <div class="col-9">
+            <div class="category-title" id="category-title"></div>
+            <div class="student-buttons" id="student-buttons"></div>
+        </div>
+    </div>
+
+    <div id="overlay" onclick="closeModal()"></div>
+    <div id="quiz-modal" style="width: 80%; max-width: 800px; padding: 40px;">
+        <h3 id="modal-title" style="font-size: 1.5em;"></h3>
+        <pre id="code-display" style="font-size: 1.2em; padding: 15px;"></pre>
+        <p><strong>Describe the flow:</strong></p>
+        <textarea rows="6" id="student-answer" placeholder="Explain what the code does..." style="font-size: 1.1em; padding: 12px;"></textarea>
+        <button onclick="submitQuiz()" style="font-size: 1.2em; padding: 12px 24px;">Submit</button>
+    </div>
+
+    <script>
+        const codeSamples = {
+            JavaScript: {
+            "Very Easy": Array.from({ length: 100 }, (_, i) => ({ code: `const x = ${i + 1}; console.log(x * x);`, explanation: `Logs the square of ${i + 1}`, output: `${(i + 1) * (i + 1)}` })),
+            "Easy": Array.from({ length: 100 }, (_, i) => ({ code: `function factorial(n) { return n <= 1 ? 1 : n * factorial(n - 1); } console.log(factorial(${i + 1}));`, explanation: `Calculates and logs the factorial of ${i + 1}`, output: `${Array.from({ length: i + 1 }, (_, j) => j + 1).reduce((a, b) => a * b, 1)}` })),
+            "Medium": Array.from({ length: 100 }, (_, i) => ({ code: `const arr = [${Array.from({ length: i + 1 }, (_, j) => j + 1).join(', ')}]; console.log(arr.reduce((a, b) => a + b, 0));`, explanation: `Calculates and logs the sum of numbers from 1 to ${i + 1}`, output: `${Array.from({ length: i + 1 }, (_, j) => j + 1).reduce((a, b) => a + b, 0)}` })),
+            "Hard": Array.from({ length: 100 }, (_, i) => ({ code: `const isPrime = (n) => { for (let j = 2; j <= Math.sqrt(n); j++) { if (n % j === 0) return false; } return n > 1; }; console.log(isPrime(${i + 1}));`, explanation: `Checks and logs whether ${i + 1} is a prime number`, output: `${(() => { const n = i + 1; for (let j = 2; j <= Math.sqrt(n); j++) { if (n % j === 0) return false; } return n > 1; })()}` })),
+            "Very Hard": Array.from({ length: 100 }, (_, i) => ({ code: `const fib = (n) => n <= 1 ? n : fib(n - 1) + fib(n - 2); console.log(fib(${i % 20}));`, explanation: `Calculates and logs the ${i % 20}th Fibonacci number`, output: `${(() => { const fib = (n) => n <= 1 ? n : fib(n - 1) + fib(n - 2); return fib(i % 20); })()}` }))
+            },
+            Python: {
+            "Very Easy": Array.from({ length: 100 }, (_, i) => ({ code: `x = ${i + 1}\nprint(x ** 2)`, explanation: `Prints the square of ${i + 1}`, output: `${(i + 1) ** 2}` })),
+            "Easy": Array.from({ length: 100 }, (_, i) => ({ code: `def factorial(n): return 1 if n <= 1 else n * factorial(n - 1)\nprint(factorial(${i + 1}))`, explanation: `Calculates and prints the factorial of ${i + 1}`, output: `${Array.from({ length: i + 1 }, (_, j) => j + 1).reduce((a, b) => a * b, 1)}` })),
+            "Medium": Array.from({ length: 100 }, (_, i) => ({ code: `arr = [${Array.from({ length: i + 1 }, (_, j) => j + 1).join(', ')}]\nprint(sum(arr))`, explanation: `Calculates and prints the sum of numbers from 1 to ${i + 1}`, output: `${Array.from({ length: i + 1 }, (_, j) => j + 1).reduce((a, b) => a + b, 0)}` })),
+            "Hard": Array.from({ length: 100 }, (_, i) => ({ code: `def is_prime(n):\n    if n <= 1: return False\n    for j in range(2, int(n**0.5) + 1):\n        if n % j == 0: return False\n    return True\nprint(is_prime(${i + 1}))`, explanation: `Checks and prints whether ${i + 1} is a prime number`, output: `${(() => { const n = i + 1; for (let j = 2; j <= Math.sqrt(n); j++) { if (n % j === 0) return false; } return n > 1; })()}` })),
+            "Very Hard": Array.from({ length: 100 }, (_, i) => ({ code: `def fib(n):\n    return n if n <= 1 else fib(n - 1) + fib(n - 2)\nprint(fib(${i % 20}))`, explanation: `Calculates and prints the ${i % 20}th Fibonacci number`, output: `${(() => { const fib = (n) => n <= 1 ? n : fib(n - 1) + fib(n - 2); return fib(i % 20); })()}` }))
+            },
+            // Similar structure for other languages with more complex examples
+        };
+
+        let currentLanguage = 'JavaScript';
+        let currentCategory = '', currentPoints = 0, currentStudent = '';
+        let quizMap = {};
+
+        function updateCategoryOptions() {
+            currentLanguage = document.getElementById('language-select').value;
+            document.getElementById('category-title').textContent = '';
+            document.getElementById('student-buttons').innerHTML = '';
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function generateFixedQuizMap(category) {
+            quizMap = {};
+            const quizzes = [...codeSamples[currentLanguage][category]];
+
+            shuffle(quizzes);
+
+            let quizIndex = 0;
+            for (let i = 1; i <= 100; i++) {
+                const id = `S${String(i).padStart(3, '0')}`;
+                quizMap[id] = quizzes[quizIndex % quizzes.length];
+                quizIndex++;
+            }
+        }
+
+        function loadCategory(category, points) {
+            currentCategory = category;
+            currentPoints = points;
+
+            generateFixedQuizMap(category);
+
+            document.getElementById('category-title').textContent = `${category} (${currentPoints} pts) - ${currentLanguage}`;
+
+            const container = document.getElementById('student-buttons');
+            container.innerHTML = '';
+            for (let i = 1; i <= 100; i++) {
+                const id = `S${String(i).padStart(3, '0')}`;
+                const btn = document.createElement('button');
+                btn.textContent = id;
+                btn.onclick = () => startQuiz(id);
+                container.appendChild(btn);
+            }
+        }
+
+        function startQuiz(studentId) {
+            currentStudent = studentId;
+            const quiz = quizMap[studentId];
+            const hasQuiz = !!quiz;
+
+            document.getElementById("modal-title").textContent = `${studentId} - ${currentCategory} (${currentPoints} pts) - ${currentLanguage}`;
+
+            if (hasQuiz) {
+                document.getElementById("code-display").textContent = quiz.code;
+                document.getElementById("student-answer").value = '';
+            } else {
+                document.getElementById("code-display").textContent = "No quiz data available yet.";
+                document.getElementById("student-answer").value = '';
+            }
+
+            document.getElementById("quiz-modal").style.display = 'block';
+            document.getElementById("overlay").style.display = 'block';
+        }
+
+        function submitQuiz() {
+            const answer = document.getElementById("student-answer").value.trim();
+            const quiz = quizMap[currentStudent];
+
+            if (!quiz) {
+                alert("No quiz data to submit.");
+                closeModal();
+                return;
+            }
+
+            if (!answer) {
+                alert("Please enter your answer.");
+                return;
+            }
+
+            const isCorrect = answer.toLowerCase() === quiz.explanation.toLowerCase();
+            if (isCorrect) {
+                alert(`${currentStudent} submitted a correct answer for ${currentCategory} (${currentPoints} pts).\n\nExplanation: ${quiz.explanation}\nOutput: ${quiz.output}`);
+            } else {
+                alert(`${currentStudent} submitted an incorrect answer for ${currentCategory} (${currentPoints} pts).\n\nCorrect Explanation: ${quiz.explanation}\nExpected Output: ${quiz.output}`);
+            }
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById("quiz-modal").style.display = 'none';
+            document.getElementById("overlay").style.display = 'none';
+        }
+    </script>
+
+</body>
+
+</html>
